@@ -21,6 +21,18 @@ const validateLogin = (data) => {
     return schema.validate(data);
 }
 
+const validateUpdate = (data) => {
+    const schema = Joi.object({
+        name:Joi.string().required().allow("").label("invalid name"),
+        sername:Joi.string().required().allow("").label("invalid sername"),
+        password:Joi.string().required().allow("").label("invalid password"),
+        email:Joi.string().email().required().allow("").label("invalid email"),
+        tel:Joi.string().required().allow("").label("invalid telephone number"),
+    })
+
+    return schema.validate(data);
+}
+
 const validateUser= (data)=>{
 
     const schema = Joi.object({
@@ -41,4 +53,4 @@ const validateUser= (data)=>{
 
 const User = mongoose.model('Users',userSchema);
 
-module.exports = {User,validateUser,validateLogin};
+module.exports = {User,validateUser,validateLogin,validateUpdate};

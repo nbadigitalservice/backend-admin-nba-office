@@ -1,5 +1,5 @@
 var jwt = require('jsonwebtoken');
-var { User,validateUser,validateLogin } = require('../models/user.model');
+var { User,validateUser,validateLogin,validateUpdate } = require('../models/user.model');
 var bcrypt = require('bcrypt');
 
 //login
@@ -7,7 +7,6 @@ module.exports.Login = async (req,res) => {
 
     try {
         
-  
     const {error} = validateLogin(req.body);
     if(error){
         return res.status(403).send({message:"Data validation failed",error:error.details[0].message})
@@ -77,11 +76,95 @@ module.exports.Create = async (req,res) => {
     const user = new User(userData);
     const newuser = await user.save();
 
-    return res.status(200).send({message:"User saved successfully",data:newuser})
+    return res.status(200).send({message:"User saved successfully",data:newuser});
 
 } catch (error) {
     console.error(error);
         return res.status(500).send({message:"Internal server error",error:error.message});
 }
 
+}
+
+//update
+module.exports.Update = async (req,res) => {
+    try {
+
+        const {error} = validateUpdate(req.body);
+
+    if(error){
+        return res.status(403).send({message:"Data validation failed",error:error.details[0].message});
+    }
+
+        const user = await User.findById(req.params.id);
+
+        if(!user){
+            return res.status(400).send({message:"User not found"});
+        }
+
+    if( req.user.user_id != user._id){
+        return res.status(403).send({message:'Permission denied'});
+    }
+
+        var password ;
+
+        if(req.body.password){
+            password = await bcrypt.hash(req.body.password,10);
+        }
+
+        const updateData = {
+            name:req.body.name?req.body.name:user.name,
+            sername:req.body.sername?req.body.sername:user.sername,
+            password:req.body.password?password:user.password,
+            email:req.body.email?req.body.email:user.email,
+            tel:req.body.tel?req.body.tel:user.tel,
+        }
+
+        const result = await User.findByIdAndUpdate(req.params.id,updateData,{returnDocument:'after'});
+
+        return res.status(200).send({message:"updated successfully",data:result});
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({message:"Internal server error",error:error.message});
+    }
+}
+
+//delete
+module.exports.Delete = async (req,res) => {
+    try {
+
+        const permission = ['owner','admin','manager'];
+
+        if(!permission.includes(req.user.level)){
+            return res.status(403).send({message:'Permission denied'});
+        }
+
+       const result = await User.deleteOne({_id:req.params.id});
+
+       return res.status(200).send(result);
+        
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({message:"Internal server error",error:error.message});
+    }
+}
+
+//get user
+module.exports.GetUser = async (req,res) => {
+    try {
+
+        const permission = ['owner','admin','manager'];
+
+        if(!permission.includes(req.user.level)){
+            return res.status(403).send({message:'Permission denied'});
+        }
+    
+
+        const user = await User.find();
+        return res.status(200).send({message:"Get user successfully",data:user});
+        
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({message:"Internal Server Error"})
+    }
 }
