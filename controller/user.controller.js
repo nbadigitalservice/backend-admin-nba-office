@@ -2,6 +2,27 @@ var jwt = require('jsonwebtoken');
 var { User,validateUser,validateLogin,validateUpdate } = require('../models/user.model');
 var bcrypt = require('bcrypt');
 
+//get me
+module.exports.Me = async (req,res) =>{
+    try {
+        const token = req.headers['token'];
+        if(!token){
+            return res.status(403).send({message:"Invalid User"})
+        }
+
+        jwt.verify(token,process.env.JWT_SECRET_KEY,(error,decoded)=>{
+            if(error){
+                return res.status(400).send({message:"Permission denied"});
+            }
+            return res.status(200).send({message:"Permission granted",data:decoded});
+        })
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({message:"Internal Server Error",error: error.message});
+    }
+}
+
 //login
 module.exports.Login = async (req,res) => {
 
@@ -27,7 +48,8 @@ module.exports.Login = async (req,res) => {
     const payload = {
         user_id:user._id,
         name:user.name,
-        level:user.level
+        level:user.level,
+        department:user.department,
     }
 
     const token = jwt.sign(payload,process.env.JWT_SECRET_KEY,{expiresIn:'4H'});
@@ -62,7 +84,7 @@ module.exports.Create = async (req,res) => {
     let userData = {
         
         name:req.body.name,
-        sername:req.body.sername,
+        surname:req.body.surname,
         username:req.body.username,
         password:password,
         level:req.body.level,

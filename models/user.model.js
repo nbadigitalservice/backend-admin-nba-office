@@ -3,11 +3,11 @@ const Joi = require('joi');
 
 const userSchema = new mongoose.Schema({
     name:{type:String,required:true},
-    sername:{type:String,required:true},
+    surname:{type:String,required:true},
     username:{type:String,required:true,unique:true},
     password:{type:String,required:true},
     level:{type:String,required:true,enum:['admin','employee','manager','owner']},
-    department:{type:String,required:true},
+    department:{type:String,required:true,enum:['Programmer','Marketing','Financial','Accounting','IT','Graphic']},
     email:{type:String},
     tel:{type:String},
 },{timestamps:true});
@@ -24,7 +24,7 @@ const validateLogin = (data) => {
 const validateUpdate = (data) => {
     const schema = Joi.object({
         name:Joi.string().required().allow("").label("invalid name"),
-        sername:Joi.string().required().allow("").label("invalid sername"),
+        surname:Joi.string().required().allow("").label("invalid surname"),
         password:Joi.string().required().allow("").label("invalid password"),
         email:Joi.string().email().required().allow("").label("invalid email"),
         tel:Joi.string().required().allow("").label("invalid telephone number"),
@@ -38,7 +38,7 @@ const validateUser= (data)=>{
     const schema = Joi.object({
 
         name:Joi.string().required().label("invalid name"),
-        sername:Joi.string().required().label("invalid sername"),
+        surname:Joi.string().required().label("invalid surname"),
         username:Joi.string().required().label("invalid usernamne"),
         password:Joi.string().required().label("invalid password"),
         level:Joi.string().required().label("invalid level"),

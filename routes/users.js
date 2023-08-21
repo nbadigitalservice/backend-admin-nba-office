@@ -5,7 +5,7 @@ var {AuthorizeUser}= require('../middleware/auth');
 
 /* GET users listing. */
 router.get('/',AuthorizeUser, User.GetUser);
-
+router.get('/me',AuthorizeUser, User.Me);
 router.post('/login',User.Login);
 router.post('/create',AuthorizeUser,User.Create);
 router.put('/update/:id',AuthorizeUser,User.Update);
