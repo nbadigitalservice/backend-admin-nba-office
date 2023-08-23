@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     department:{type:String,required:true,enum:['Programmer','Marketing','Financial','Accounting','IT','Graphic']},
     email:{type:String},
     tel:{type:String},
+    about_me:{type:String}
 },{timestamps:true});
 
 const validateLogin = (data) => {
