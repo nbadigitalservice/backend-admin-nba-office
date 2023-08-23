@@ -31,10 +31,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const namespace = '/v1/official'
-app.use(namespace, indexRouter);
-app.use(namespace+'/api', apiRouter);
-app.use(namespace+'/users', usersRouter);
+
+app.use('/v1/official', indexRouter);
+app.use('/v1/official/api', apiRouter);
+app.use('/v1/official/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
