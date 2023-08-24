@@ -10,7 +10,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/orders',AuthorizeUser,Orders.GetOrders);
 router.get('/orders/:id',AuthorizeUser,Orders.GetOrdersById);
-router.post('/sendfeedback/:id',AuthorizeUser,Orders.OrderFeedback)
-
+router.post('/sendfeedback/:id',AuthorizeUser,Orders.OrderFeedback);
+router.post('/doneorder/:id',AuthorizeUser,Orders.DoneOrder);
 
 module.exports = router;
