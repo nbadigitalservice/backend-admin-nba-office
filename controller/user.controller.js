@@ -10,11 +10,25 @@ module.exports.Me = async (req,res) =>{
             return res.status(403).send({message:"Invalid User"})
         }
 
-        jwt.verify(token,process.env.JWT_SECRET_KEY,(error,decoded)=>{
+        jwt.verify(token,process.env.JWT_SECRET_KEY,async (error,decoded)=>{
             if(error){
                 return res.status(400).send({message:"Permission denied"});
             }
-            return res.status(200).send({message:"Permission granted",data:decoded});
+            const projection = {
+                name:1,
+                surname:1,
+                username:1,
+                level:1,
+                department:1,
+                email:1,
+                tel:1,
+                about_me:1,
+                line:1
+            }
+            const user = await User.findById(decoded.user_id,projection);
+            console.log(user);
+        
+            return res.status(200).send({message:"Permission granted",data:user});
         })
 
     } catch (error) {
