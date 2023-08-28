@@ -8,7 +8,8 @@ router.get('/',AuthorizeUser, User.GetUser);
 router.get('/me',AuthorizeUser, User.Me);
 router.post('/login',User.Login);
 router.post('/create',AuthorizeUser,User.Create);
-router.put('/update/:id',AuthorizeUser,User.Update);
+router.put('/update',AuthorizeUser,User.Update);
 router.delete('/:id',AuthorizeUser,User.Delete);
+router.put('/avatar',AuthorizeUser,User.UpdateAvatar);
 
 module.exports = router;
