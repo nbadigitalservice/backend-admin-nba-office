@@ -75,6 +75,20 @@ module.exports.GetUserBlog = async (req,res) => {
     }
 }
 
+// get User blog by id
+module.exports.GetUserBlogById = async (req,res) => {
+    try {
+        const userBlog = await Blog.findOne({_id:req.params.id});
+
+        return res.status(200).send({message:"Get User Blog Success",data:userBlog});
+        
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({message:"Internal Server Error",data:error});
+    }
+}
+
+
 //delete blog from user
 module.exports.DeleteBlog = async (req,res) => {
     try {
@@ -97,10 +111,47 @@ module.exports.DeleteBlog = async (req,res) => {
         }
 
         //delete blog
-        const result = await Blog.deleteOne({_id:req.params.id},{rawResult:true});
+        const result = await Blog.deleteOne({_id:req.params.id},{includeResultMetadata: false});
 
         return res.status(200).send({message:"delete blog successfully",data:result});
 
+        
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({message:"Internal Server Error",data:error.message});
+    }
+}
+
+//delete blog image
+module.exports.DeleteBlogImage = async (req,res) => {
+    try {
+
+        await deleteFile(req.params.id);
+
+        return res.status(200).send({message:"delete blog image successfully"});
+        
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({message:"Internal Server Error",data:error.message});
+    }
+}
+
+module.exports.GetAllBlog = async (req,res) => {
+    try {
+
+        const pipeline = [{
+           
+            $lookup:{
+                from:'blogmessages',
+                localField: "_id",    // field in the orders collection
+                foreignField: "blog_id",
+                as:'message_collection'
+            }
+        }]
+
+        const result = await Blog.aggregate(pipeline);
+
+        return res.status(200).send({message:"Get all blogs successfully",data:result});
         
     } catch (error) {
         console.error(error);
