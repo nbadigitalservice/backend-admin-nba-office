@@ -1,5 +1,5 @@
 var {Blog} = require("./../models/blog.model");
-var { uploadFileCreate } = require("./../lib/uploadservice");
+var { uploadFileCreate,deleteFile } = require("./../lib/uploadservice");
 const multer = require("multer");
 
 const storage = multer.diskStorage({
@@ -72,5 +72,38 @@ module.exports.GetUserBlog = async (req,res) => {
     } catch (error) {
         console.error(error);
         return res.status(500).send({message:"Internal Server Error",data:error});
+    }
+}
+
+//delete blog from user
+module.exports.DeleteBlog = async (req,res) => {
+    try {
+
+        //get user blog by id from url parameter
+        const userBlog = await Blog.findOne({_id:req.params.id});
+
+        if(!userBlog){
+            return res.status(404).send({message:'blog not found'})
+        }
+
+        if(userBlog && userBlog.user_id !== req.user.user_id){
+            return res.status(403).send({message:"User not permitted to delete this blog"});
+        }
+
+        //delete all blog images
+
+        for(const image of userBlog.imgUrl){
+            await deleteFile(image.imageId);
+        }
+
+        //delete blog
+        const result = await Blog.deleteOne({_id:req.params.id},{rawResult:true});
+
+        return res.status(200).send({message:"delete blog successfully",data:result});
+
+        
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({message:"Internal Server Error",data:error.message});
     }
 }

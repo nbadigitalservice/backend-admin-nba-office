@@ -6,6 +6,7 @@ var BlogMessage = require("./../controller/blog.message.controller");
 
 router.get('/',AuthorizeUser,Blog.GetUserBlog);
 router.post('/create',AuthorizeUser,Blog.Create);
+router.delete('/delete/:id',AuthorizeUser,Blog.DeleteBlog);
 
 //message
 router.post('/message/:id',AuthorizeUser,BlogMessage.CreateBlogMessage);
