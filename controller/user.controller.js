@@ -44,7 +44,6 @@ module.exports.Me = async (req, res) => {
         about_me: 1,
       };
       const user = await User.findById(decoded.user_id, projection);
-      console.log(user);
 
       return res.status(200).send({message: "Permission granted", data: user});
     });

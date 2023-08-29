@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('backend-admin-nba-office:server');
 var http = require('http');
+var whitelist = require('../bin/whitelist');
 
 /**
  * Get port from environment and store in Express.
@@ -20,6 +21,48 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+/**
+ * Create Scocket io server.
+ */
+
+const { Server } = require("socket.io");
+
+const io = new Server(server,{
+  cors: {
+    origin: whitelist,
+    methods: 'GET,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  }
+});
+
+  io.path="/socket.io/v1/official";
+
+io.on('connection', socket => {
+  console.log('a user connected');
+
+  //update order
+  socket.on('sendUpdateOrder',function(data) {
+    io.emit('OrderUpdated', data)
+  })
+});
+
+/**
+ * new order event
+ */
+
+/**
+ * new message event
+ */
+
+var {BlogMessage} = require("../models/blog.message.model")
+
+BlogMessage.watch().on('change',data=> {
+  console.log('new message');
+
+    io.emit('newmessage',{event:'new message'})
+
+})
 
 /**
  * Listen on provided port, on all network interfaces.
