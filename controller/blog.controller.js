@@ -78,9 +78,47 @@ module.exports.GetUserBlog = async (req,res) => {
 // get User blog by id
 module.exports.GetUserBlogById = async (req,res) => {
     try {
-        const userBlog = await Blog.findOne({_id:req.params.id});
+        const id = req.params.id
+        const blogs = await Blog.findById(id)
+        
+        if (!blogs) {
+            return res.status(403).send({ message: 'ไม่พบข้อมูล blog ที่ค้นหา' })
+        }
 
-        return res.status(200).send({message:"Get User Blog Success",data:userBlog});
+        const pipeline = [
+            {
+                $match: { "_id": blogs._id }
+            },
+            {
+                $addFields: {
+                    blogId: { $toString: "$_id" }
+                }
+            },
+            {
+                $lookup: {
+                    from: "blogmessages",
+                    localField: "blogId",
+                    foreignField: "blog_id",
+                    as: "comments"
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    user_id: 1,
+                    title: 1,
+                    description: 1,
+                    imgUrl: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    comments: "$comments.message"
+                }
+            }
+        ]
+
+        const blogsWithMessages = await Blog.aggregate(pipeline).exec()
+
+        return res.status(200).send({ message:"Get User Blog Success", data:blogsWithMessages });
         
     } catch (error) {
         console.error(error);
@@ -136,25 +174,41 @@ module.exports.DeleteBlogImage = async (req,res) => {
     }
 }
 
-module.exports.GetAllBlog = async (req,res) => {
+module.exports.GetAllBlog = async (req, res) => {
     try {
-
-        const pipeline = [{
-           
-            $lookup:{
-                from:'blogmessages',
-                localField: "_id",    // field in the orders collection
-                foreignField: "blog_id",
-                as:'message_collection'
+        const pipeline = [
+            {
+                $addFields: {
+                    blogId: { $toString: "$_id" }
+                }
+            },
+            {
+                $lookup: {
+                    from: "blogmessages",
+                    localField: "blogId",
+                    foreignField: "blog_id",
+                    as: "comments"
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    user_id: 1,
+                    title: 1,
+                    description: 1,
+                    imgUrl: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    comments: "$comments.message"
+                }
             }
-        }]
+        ]
 
-        const result = await Blog.aggregate(pipeline);
+        const blogsWithMessages = await Blog.aggregate(pipeline).exec()
 
-        return res.status(200).send({message:"Get all blogs successfully",data:result});
-        
+        return res.status(200).send({ message: 'ดึงข้อมูลสำเร็จ', data: blogsWithMessages })
     } catch (error) {
-        console.error(error);
-        return res.status(500).send({message:"Internal Server Error",data:error.message});
+        console.error("Error:", error)
+        return res.status(500).send({ message: "Internal server error", data: error })
     }
 }
