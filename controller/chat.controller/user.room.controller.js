@@ -2,6 +2,8 @@ const { ChatRoom } = require('../../models/chat.model/user.room.model')
 const { User } = require('../../models/user.model')
 const multer = require('multer')
 var { uploadFileCreate, deleteFile } = require("../../lib/uploadservice");
+const { v4: uuidv4 } = require('uuid');
+
 
 const storage = multer.diskStorage({
     filename: function (req, file, cb) {
@@ -35,17 +37,18 @@ module.exports.createRoom = async (req, res) => {
             } else {
                 const userData = []
                 userData.push({
-                    user_id: findUser._id,
-                    user_name: findUser.name,
-                    user_surname: findUser.surname,
-                    user_email: findUser.email,
-                    user_tel: findUser.tel
+                    userid: findUser._id,
+                    username: findUser.name,
+                    usersurname: findUser.surname,
+                    useremail: findUser.email,
+                    usertel: findUser.tel
                 })
 
                 const data = {
+                    roomId: uuidv4(),
                     users: userData,
-                    name: req.body.name,
-                    image: image[0],
+                    roomName: req.body.roomName,
+                    avatar: image[0],
                 }
                 const createroom = new ChatRoom(data)
                 try {
