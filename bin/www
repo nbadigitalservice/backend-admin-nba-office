@@ -48,19 +48,24 @@ io.on('connection', socket => {
 });
 
 /**
- * new order event
- */
-
-/**
  * new message event
  */
 
-var {BlogMessage} = require("../models/blog.message.model")
+var {Task} = require("../models/task.model");
+var {BlogMessage} = require("../models/blog.message.model");
 
-BlogMessage.watch().on('change',data=> {
-  console.log('new message');
+Task.watch().on('change', (data)=> {
+  console.log('new order',data);
 
-    io.emit('newmessage',{event:'new message'})
+     io.emit('neworder',{event:'new order'})
+
+})
+
+
+BlogMessage.watch().on('change',(data)=> {
+  console.log('new message',data);
+
+   io.emit('newmessage',{event:'new message'})
 
 })
 
