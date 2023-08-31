@@ -1,22 +1,20 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-const { v4: uuidv4 } = require('uuid');
-
 
 const chatRoomSchema = new mongoose.Schema(
   {
-    _id: { type: String, required: true, default: uuidv4() },
+    roomId: { type: String, required: true },
     users: {
       type: [{
-        user_id: { type: String, required: true },
-        user_name: { type: String, required: true },
-        user_surname: { type: String, required: true },
-        user_email: { type: String, required: true },
-        user_tel: { type: String, required: true }
+        userid: { type: String, required: true },
+        username: { type: String, required: true },
+        usersurname: { type: String, required: true },
+        useremail: { type: String, required: true },
+        usertel: { type: String, required: true }
       }]
     },
-    name: { type: String, required: true },
-    image: {
+    roomName: { type: String, required: true },
+    avatar: {
       type: [
         {
           url: { type: String, required: true },
