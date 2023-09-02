@@ -42,6 +42,9 @@ app.use('/v1/official/blog', require("./routes/blog"));
 app.use('/v1/official/chat', require("./routes/chat.router/index"));
 app.use('/v1/official/callback',require('./routes/callback'));
 
+// task
+app.use('/v1/official/task', require("./routes/task"))
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

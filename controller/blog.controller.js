@@ -1,4 +1,4 @@
-var {Blog} = require("./../models/blog.model");
+var { Blog } = require("./../models/blog.model");
 var { uploadFileCreate,deleteFile } = require("./../lib/uploadservice");
 const multer = require("multer");
 
@@ -191,6 +191,29 @@ module.exports.GetAllBlog = async (req, res) => {
                 }
             },
             {
+                $unwind: "$comments"
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "comments.member_name",
+                    foreignField: "username",
+                    as: "comments.user"
+                }
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    user_id: { $first: "$user_id" },
+                    title: { $first: "$title" },
+                    description: { $first: "$description" },
+                    imgUrl: { $first: "$imgUrl" },
+                    createdAt: { $first: "$createdAt" },
+                    updatedAt: { $first: "$updatedAt" },
+                    comments: { $push: "$comments" }
+                }
+            },
+            {
                 $project: {
                     _id: 1,
                     user_id: 1,
@@ -199,16 +222,17 @@ module.exports.GetAllBlog = async (req, res) => {
                     imgUrl: 1,
                     createdAt: 1,
                     updatedAt: 1,
-                    comments: "$comments.message"
+                    "comments.message": 1,
+                    "comments.user": { $arrayElemAt: ["$comments.user", 0] }
                 }
             }
-        ]
+        ];
 
-        const blogsWithMessages = await Blog.aggregate(pipeline).exec()
+        const blogsWithMessages = await Blog.aggregate(pipeline).exec();
 
-        return res.status(200).send({ message: 'ดึงข้อมูลสำเร็จ', data: blogsWithMessages })
+        return res.status(200).send({ message: 'ดึงข้อมูลสำเร็จ', data: blogsWithMessages });
     } catch (error) {
-        console.error("Error:", error)
-        return res.status(500).send({ message: "Internal server error", data: error })
+        console.error("Error:", error);
+        return res.status(500).send({ message: "Internal server error", data: error });
     }
 }

@@ -4,5 +4,7 @@ const { AuthorizeUser } = require('../../middleware/auth');
 const ChatRoom = require('../../controller/chat.controller/user.room.controller') 
 
 router.post('/createroom', AuthorizeUser, ChatRoom.createRoom)
+router.get('/room', AuthorizeUser, ChatRoom.GetRoomByUserID)
+router.post('/inviteuser/:roomId', AuthorizeUser, ChatRoom.InviteUser)
 
 module.exports = router;
