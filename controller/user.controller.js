@@ -225,7 +225,7 @@ module.exports.Delete = async (req, res) => {
 //get user
 module.exports.GetUser = async (req, res) => {
   try {
-    const permission = ["owner", "admin", "manager"];
+    const permission = ["owner", "admin", "manager", "employee"];
 
     if (!permission.includes(req.user.level)) {
       return res.status(403).send({message: "Permission denied"});
