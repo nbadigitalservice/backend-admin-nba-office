@@ -9,7 +9,6 @@ require('dotenv').config();
 const connect = require('./lib/mongodb');
 
 //connect database;
-
 connect();
 
 var indexRouter = require('./routes/index');
