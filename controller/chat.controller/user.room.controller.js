@@ -126,12 +126,13 @@ module.exports.InviteUser = async (req, res) => {
 
 module.exports.Accept = async (req, res) => {
     try {
-        const id = req.params._id
-        const task = await Task.find({ to: id })
+        const id = req.params.id
+        const task = await Task.find({ _id: id })
         if (!task) {
             return res.status(403).send({ message: 'ไม่มีการแจ้งเตือนนี้อยู่แล้ว' })
         } else {
-            const findUser = await User.findById(task.to)
+            const findUser = await User.findById(task[0].to)
+            
             if (!findUser) {
                 return res.status(403).send({ message: 'ไม่พบ User' })
             } else {
@@ -143,7 +144,7 @@ module.exports.Accept = async (req, res) => {
                     if (!findChat) {
                         return res.status(403).send({ message: 'ไม่มีห้องแชทนี้อยู่แล้ว' })
                     } else {
-                        const userData = []
+                        let userData = findChat.users
                         userData.push({
                             userid: findUser._id,
                             username: findUser.name,
@@ -152,6 +153,9 @@ module.exports.Accept = async (req, res) => {
                             usertel: findUser.tel
                         })
                         await ChatRoom.findByIdAndUpdate(findChat._id, { users: userData })
+                        await Task.findByIdAndUpdate(task[0]._id, { status: 'อ่านแล้ว' })
+                        await UserInvite.findByIdAndDelete(findUserInvite._id)
+                        return res.status(200).send({ message: 'เข้าร่วมห้องแชทสำเร็จ' })
                     }
                 }
             }
@@ -161,3 +165,5 @@ module.exports.Accept = async (req, res) => {
         return res.status(500).send({ message: 'Internal Server', data: error })
     }
 }
+
+module.exports.Decline

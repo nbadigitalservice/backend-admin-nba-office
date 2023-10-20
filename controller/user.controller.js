@@ -65,7 +65,7 @@ module.exports.Login = async (req, res) => {
         error: error.details[0].message,
       });
     }
-
+    console.log(req.body.username)
     const user = await User.findOne({username: req.body.username});
 
     if (!user) {
@@ -225,7 +225,7 @@ module.exports.Delete = async (req, res) => {
 //get user
 module.exports.GetUser = async (req, res) => {
   try {
-    const permission = ["owner", "admin", "manager"];
+    const permission = ["owner", "admin", "manager", "employee"];
 
     if (!permission.includes(req.user.level)) {
       return res.status(403).send({message: "Permission denied"});
