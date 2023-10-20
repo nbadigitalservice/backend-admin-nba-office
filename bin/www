@@ -36,7 +36,7 @@ const io = new Server(server,{
   }
 });
 
-  io.path="/socket.io/v1/official";
+  io.path="/socket.io/v1/official/";
 
 io.on('connection', socket => {
   console.log('a user connected');
