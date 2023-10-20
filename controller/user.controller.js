@@ -65,7 +65,7 @@ module.exports.Login = async (req, res) => {
         error: error.details[0].message,
       });
     }
-
+    console.log(req.body.username)
     const user = await User.findOne({username: req.body.username});
 
     if (!user) {
