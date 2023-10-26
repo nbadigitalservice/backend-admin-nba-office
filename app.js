@@ -14,6 +14,8 @@ connect();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var apiRouter = require('./routes/api');
+var timesheetRouter = require('./routes/timesheets');
+var checkinRouter = require('./routes/checkin');
 
 const app = express();
 
@@ -44,6 +46,13 @@ app.use('/v1/official/callback',require('./routes/callback'));
 // task
 app.use('/v1/official/task', require("./routes/task"))
 
+// Timesheets
+
+app.use('/v1/official/timesheet', timesheetRouter);
+
+// Checkin
+
+app.use('/v1/official/checkin', checkinRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
