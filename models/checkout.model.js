@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 
-const checkinSchema = new mongoose.Schema(
+const checkoutSchema = new mongoose.Schema(
     {
         name:{
             type:String
@@ -18,14 +18,10 @@ const checkinSchema = new mongoose.Schema(
         },
         updatedAt:{
             type:Date
-        },
-        userId:{
-            type:String
-           
         }
     },
     {timestamp: true}
 );
 
-const checkin = mongoose.model('Checkin', checkinSchema);
-module.exports =  checkin ;
+const checkout = mongoose.model('Checkout', checkoutSchema);
+module.exports =  {checkout} ;

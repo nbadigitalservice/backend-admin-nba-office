@@ -16,6 +16,7 @@ var usersRouter = require('./routes/users');
 var apiRouter = require('./routes/api');
 var timesheetRouter = require('./routes/timesheets');
 var checkinRouter = require('./routes/checkin');
+var checkoutRouter = require('./routes/checkout');
 
 const app = express();
 
@@ -53,6 +54,10 @@ app.use('/v1/official/timesheet', timesheetRouter);
 // Checkin
 
 app.use('/v1/official/checkin', checkinRouter);
+
+// Checkout
+
+app.use('v1/official/checkout', checkoutRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

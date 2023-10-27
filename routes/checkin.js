@@ -6,6 +6,8 @@ var {AuthorizeUser}= require('../middleware/auth');
 
 /* GET timesheet*/
 
-router.get('/getcheckin',AuthorizeUser,Checkin.Getcheckin);
+router.get('/getcheckin', AuthorizeUser,Checkin.Getcheckin);
+router.post('/create', AuthorizeUser, Checkin.Create);
+router.put('/update', AuthorizeUser, Checkin.Update)
 
 module.exports = router;
