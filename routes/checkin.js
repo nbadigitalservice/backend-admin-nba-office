@@ -9,5 +9,6 @@ var {AuthorizeUser}= require('../middleware/auth');
 router.get('/getcheckin', AuthorizeUser,Checkin.Getcheckin);
 router.post('/create', AuthorizeUser, Checkin.Create);
 router.put('/update', AuthorizeUser, Checkin.Update)
+router.delete('/delete/:id',AuthorizeUser,Checkin.Delete);
 
 module.exports = router;
