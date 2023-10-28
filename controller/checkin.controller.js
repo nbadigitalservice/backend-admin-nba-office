@@ -11,6 +11,7 @@ module.exports.Getcheckin = async (req, res) => {
       }
   
       const checkin = await Checkin.find();
+      this.mockup_data = checkin;
     //   const checkin = [1,2,3,4,5,6,7];
       return res.status(200).send({message: "Get user successfully", data: checkin});
     } catch (error) {
@@ -33,6 +34,15 @@ module.exports.Create = async (req, res) => {
         }else{
             var check_status = "ยังไม่เข้างาน";
         }
+          // const now = new Date()
+          // const currentUser = await User.findById(req.user.user_id);
+          // const chk_chk = await Checkin.find({userId:"1"});
+          // console.log(chk_chk);
+          // console.log("This ID >>>",req.user.iat);
+          // const data_time = req.user.iat;
+          // console.log("Name :",Checkin.timeChackin);
+          console.log(req.get.checkin);
+        // save checkin
         
         let checkinData = {
             // name: req.body.name,
@@ -46,6 +56,7 @@ module.exports.Create = async (req, res) => {
             timeChackin: Date.now(),
             createdAt: Date.now(),
             updatedAt: Date.now(),
+            userId: req.body.userId,
         };
         console.log(checkinData)
 
@@ -95,6 +106,22 @@ module.exports.Update = async (req, res) => {
     .send({message: "Internal server error", error: error.message})
   }
 };
+
+// Delete Checkin Data
+module.exports.Delete = async (req, res) => {
+  try {
+    const permission = ["owner", "admin", "manager"];
+
+    if (!permission.includes(req.user.level)) {
+      return res.status(403).send({message: "Permission denied"});
+    }
+
+    const result = await Checkin.deleteOne(req.params.id);
+    return res.status(200).send(result);
+    }catch(error){
+    return res.status(500).send({message: "Internal server error", error: error.message})
+    }
+}
 
 
 
