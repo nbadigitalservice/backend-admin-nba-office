@@ -38,7 +38,7 @@ module.exports.Getcheckout = async (req, res) => {
             // arr_data[1] = workingTime;
         console.log("Arr Data 1 >>>>> ",arr_data);
       
-        return res.status(200).send({message: "Check Success", data: checkout});
+        return res.status(200).send({message: "Check Success", data: arr_data});
     }catch(error){
         console.error(error);
         return res.status(500).send({message: "Internal Server Error"});
