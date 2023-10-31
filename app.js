@@ -16,6 +16,7 @@ var usersRouter = require('./routes/users');
 var apiRouter = require('./routes/api');
 var checkinRouter = require('./routes/checkin');
 var checkoutRouter = require('./routes/checkout');
+var leaveRouter = require('./routes/leave');
 
 const app = express();
 
@@ -52,6 +53,9 @@ app.use('/v1/official/checkin', checkinRouter);
 
 // Checkout
 app.use('/v1/official/checkout', checkoutRouter);
+
+// Vacation Leave
+app.use('/v1/official/leave', leaveRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
