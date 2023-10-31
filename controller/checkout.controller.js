@@ -27,6 +27,10 @@ module.exports.Getcheckout = async (req, res) => {
       const checkIntactualTime = GetfulltimeCheckin.split(':');
       const checkinSeconds = (+checkIntactualTime[0]) * 60 * 60 + (+checkIntactualTime[1]) * 60 + (+checkIntactualTime[2]);
       const workingTime = (((checkoutSeconds-checkinSeconds)/60)/60);
+      const workingTimeStr = workingTime.toString();
+      const chk_mod = (checkoutSeconds-checkinSeconds);
+    //   console.log(" ปัดขึ้น ",Math.ceil(1.3499999999999972));   --->> ปัดเศษขึ้น
+      console.log("Mod Data : ", chk_mod);
 
       /*-------------------------*/
         const checkout = await Checkout.find();
@@ -36,9 +40,9 @@ module.exports.Getcheckout = async (req, res) => {
             arr_data[0] = (checkout);
             arr_data[1] = (workingTime);
             // arr_data[1] = workingTime;
-        console.log("Arr Data 1 >>>>> ",arr_data);
+        console.log("Arr Data 1 >>>>> ",checkoutSeconds);
       
-        return res.status(200).send({message: "Check Success", data: arr_data});
+        return res.status(200).send({message: "Check Success", data: arr_data[1]});
     }catch(error){
         console.error(error);
         return res.status(500).send({message: "Internal Server Error"});
