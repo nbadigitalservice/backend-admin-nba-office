@@ -76,7 +76,6 @@ module.exports.Login = async (req, res) => {
       req.body.password,
       user.password
     );
-
     if (!isValidPassword) {
       return res.status(403).send({message: "Invalid password"});
     }
@@ -245,7 +244,9 @@ module.exports.UpdateAvatar = async (req, res) => {
 
     console.log("user", req.user);
     //delete user avatar image;
-    const currentUser = await User.findById(req.user.user_id);
+    const currentUser = await User.findById(
+      
+    );
     const currentAvatarId = currentUser.avatar?.imageId;
 
     if (currentAvatarId) {
