@@ -14,9 +14,9 @@ connect();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var apiRouter = require('./routes/api');
-var timesheetRouter = require('./routes/timesheets');
 var checkinRouter = require('./routes/checkin');
 var checkoutRouter = require('./routes/checkout');
+var leaveRouter = require('./routes/leave');
 
 const app = express();
 
@@ -47,17 +47,15 @@ app.use('/v1/official/callback',require('./routes/callback'));
 // task
 app.use('/v1/official/task', require("./routes/task"))
 
-// Timesheets
-
-app.use('/v1/official/timesheet', timesheetRouter);
-
 // Checkin
 
 app.use('/v1/official/checkin', checkinRouter);
 
 // Checkout
+app.use('/v1/official/checkout', checkoutRouter);
 
-app.use('v1/official/checkout', checkoutRouter);
+// Vacation Leave
+app.use('/v1/official/leave', leaveRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

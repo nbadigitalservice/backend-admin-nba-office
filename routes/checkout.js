@@ -6,6 +6,7 @@ var {AuthorizeUser}= require('../middleware/auth');
 
 /* GET checkout*/
 
-router.get('/getcheckout', AuthorizeUser,Checkout.Getchekout);
+router.get('/getdata', AuthorizeUser,Checkout.Getcheckout);
+router.post('/createcheckout',AuthorizeUser,Checkout.CreateCheckOut)
 
 module.exports = router;

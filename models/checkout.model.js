@@ -24,4 +24,4 @@ const checkoutSchema = new mongoose.Schema(
 );
 
 const checkout = mongoose.model('Checkout', checkoutSchema);
-module.exports =  {checkout} ;
+module.exports =  checkout ;
