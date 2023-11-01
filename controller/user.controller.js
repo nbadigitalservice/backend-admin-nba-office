@@ -81,7 +81,7 @@ module.exports.Login = async (req, res) => {
     }
 
     const payload = {
-      user_id: (user._id,"<<<"),
+      user_id: user._id,
       name: user.name,
       level: user.level,
       department: user.department,
