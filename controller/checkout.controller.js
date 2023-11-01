@@ -14,14 +14,14 @@ module.exports.Getcheckout = async (req, res) => {
       var end = new Date();
       end.setHours(23,59,59,999);
       /* Check Data Checkout time */
-      const CheckoutTime = await Checkout.find({$and:[{timeChackin: {$gte: start, $lt: end},name: "Undermind6"}]}).select('timeChackin');
+      const CheckoutTime = await Checkout.find({$and:[{timeChackin: {$gte: start, $lt: end},userId: req.user.user_id}]}).select('timeChackin');
       const CheckoutFullTime = (CheckoutTime[0]['timeChackin']).toString();
       const GetfulltimeCheckout = CheckoutFullTime.slice(16,24);
       const checkOutactualTime = GetfulltimeCheckout.split(':');
       const checkoutSeconds =  (+checkOutactualTime[0]) * 60 * 60 + (+checkOutactualTime[1]) * 60 + (+checkOutactualTime[2]);
       /* Check Data Checin time */
 
-      const CheckinTime = await Checkin.find({$and:[{timeChackin: {$gte: start, $lt: end},name: "Undermind6"}]}).select('timeChackin');
+      const CheckinTime = await Checkin.find({$and:[{timeChackin: {$gte: start, $lt: end},userId: req.user.user_id}]}).select('timeChackin');
       const CheckinFullTime = (CheckinTime[0]['timeChackin']).toString();
       const GetfulltimeCheckin = CheckinFullTime.slice(16,24);
       const checkIntactualTime = GetfulltimeCheckin.split(':');
@@ -31,8 +31,7 @@ module.exports.Getcheckout = async (req, res) => {
       /*-------------------------*/
         const checkout = await Checkout.find();
 
-
-        var arr_data = new Array();
+          var arr_data = new Array();
             arr_data[0] = (checkout);
             arr_data[1] = (workingTime);
             // arr_data[1] = workingTime;
