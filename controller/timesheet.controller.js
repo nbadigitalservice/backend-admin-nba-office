@@ -18,11 +18,29 @@ module.exports.GetTimesheet = async (req, res) => {
         }
         const getDataTimesheet = await Timesheet.find();
         /* --------------------- Check Data ---------------------*/
+        var date = new Date();
+        // date.setHours(Datenow.getHours() + 5);
         var Datenow = new Date().toISOString();
         var Today = Datenow.slice(0,10);
         var Time = Datenow.slice(11,19);
-        const getToday = await Timesheet.find({$and:[{workDate: Today,userId: req.user.user_id}]});
-        console.log(getToday);
+        const cktime_checkin = await Timesheet.find({$and:[{workDate: Today,userId: req.user.user_id}]}).select('checkin');
+        const starWorking = cktime_checkin[0]['checkin'];
+        const cktime_checkout = await Timesheet.find({$and:[{workDate: Today,userId: req.user.user_id}]}).select('checkout');
+        const splitCheckin = starWorking.split(':');
+        const splitCheckout = (cktime_checkout[0]['checkout']).split(':');
+        const checkin = (+splitCheckin[0]) * 60 * 60 + (+splitCheckin[1]) * 60 + (+splitCheckin[2]);
+        const checkout = (+splitCheckout[0]) * 60 * 60 + (+splitCheckout[1]) * 60 + (+splitCheckout[2]);
+        const calTotalTime = checkout - checkin;
+        const TotalTime = (calTotalTime/60)/60;
+        // var DateTimeZone = Datenow.addHours(7);
+        // const getToday = await Timesheet.find({$and:[{workDate: Today,userId: req.user.user_id}]});
+
+        const getToday = await Timesheet.find({workDate: Today});
+
+        const getCheckinTime = await Timesheet.find({workDate: Today, userId: req.user.name});
+        // console.log(checkin);
+        console.log("Time =",TotalTime);
+        
         
          /* -----------------------------------------------------*/
 
