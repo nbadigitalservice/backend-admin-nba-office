@@ -73,12 +73,13 @@ module.exports.Create = async (req, res) => {
           // return res.status().send({messsage: "Your logined"});
           console.log("Your logined");
           let checkinData = {
-            name: req.body.name,
-            status: req.body.status == 1 ? "เข้างาน" : "ยังไม่เข้างาน",
+            name: "Undermind9",
+            status: req.body.status == 1 ? "ยังไม่เข้างาน" : "เข้างาน",
             timeChackin: Date.now(),
             createdAt: Date.now(),
             updatedAt: Date.now(),
             userId: req.body.userId, // <<<<<<<<< insert User ID //
+            Not: "Not"
         };
         // console.log(checkinData)
  

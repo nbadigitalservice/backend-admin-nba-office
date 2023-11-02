@@ -22,6 +22,9 @@ const checkinSchema = new mongoose.Schema(
         userId:{
             type:String
            
+        },
+        Not:{
+            type:String
         }
     },
     {timestamp: true}
