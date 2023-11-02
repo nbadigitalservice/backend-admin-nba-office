@@ -18,13 +18,17 @@ module.exports.GetTimesheet = async (req, res) => {
         }
         const getDataTimesheet = await Timesheet.find();
         /* --------------------- Check Data ---------------------*/
-
+        var Datenow = new Date().toISOString();
+        var Today = Datenow.slice(0,10);
+        var Time = Datenow.slice(11,19);
+        const getToday = await Timesheet.find({$and:[{workDate: Today,userId: req.user.user_id}]});
+        console.log(getToday);
         
          /* -----------------------------------------------------*/
 
         
         
-         return res.status(200).send({message: "Get Data Success", data: getDataTimesheet});
+         return res.status(200).send({message: "Get Data Success", data: getDataTimesheet, getToday});
     }catch(error){
         res.status(500).send({message: "Internal Server Error"});
     }
