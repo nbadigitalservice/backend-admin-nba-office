@@ -19,32 +19,7 @@ module.exports.GetTimesheet = async (req, res) => {
         const getDataTimesheet = await Timesheet.find();
         console.log(getDataTimesheet);
         /* --------------------- Check Data ---------------------*/
-        const getTimeCheckout  = await Timesheet.find({name: req.user.name, workDate: "2023-11-03"}).select('checkout');
-        const TimeCheckoutOT = getTimeCheckout[0]['checkout'];
-        var Datenow = new Date().toISOString('en-US', { timeZone: 'Asia/Jakarta' });
-        var Today = Datenow.slice(0,10);
-        var Time = Datenow.slice(11,19);
-        if(TimeCheckoutOT > "18:29:59"){
-            console.log("startOT");
-        }else{
-            console.log("Can't start OT");
-        }
 
-        const DateTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' },
-        {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', second: "2-digit"}); 
-        const getHours = new Date(DateTime).getHours();
-        const getMin  = new Date(DateTime).getMinutes();
-        const getSecond = new Date(DateTime).getSeconds();
-        var getDay = new Date(DateTime).getDay()-2;
-        var getMonth = new Date(DateTime).getMonth();
-        var getYear = new Date(DateTime).getFullYear();
-
-        const FullTime = (getHours+":"+getMin+":"+getSecond);
-        const FullDate = (getYear+":"+getMonth+":"+getDay);
-
-        console.log("This Day : ",FullDate, "This Time : ",FullTime);
-        console.log("Date Time : ", DateTime);
-        console.log('---------------------------------');
 
 
          return res.status(200).send({message: "Get Data Success", data: getDataTimesheet});
@@ -115,9 +90,19 @@ module.exports.CreateCheckout = async (req, res) => {
           if(getDay < 10){
             getDay = '0'+getDay;
           }
+          if(getMonth<10){
+            getMonth = '0'+getMonth;
+          }
+          if(getHours<10){
+            getHours = '0'+getHours;
+          }
+          if(getMin<10){
+            getMin = '0'+getMin
+          }
+
           const FullTime =(getHours+":"+getMin+":"+getSecond);
           const FullDate = (getYear+"-"+getMonth+"-"+getDay);
-          console.log(FullTime);
+          console.log(FullTime,"------------", getHours+":"+getMin+":"+getSecond);
           /*--------------------------------------- */
 
         const chk_checkout = await Timesheet.find({$and:[{workDate: FullDate, name: req.user.name,checkout: "-",userId: req.user.user_id}]});
@@ -174,8 +159,8 @@ module.exports.CreateCheckout = async (req, res) => {
             //     const totalOT =  checkout_OT - "18.30";
             //     console.log(totalOT);
             // }
-            const updateOT = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{ot: totalOT}})
-            const updateTotal = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{total: convertTotal}})
+            // const updateOT = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{ot: totalOT}})
+            // const updateTotal = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{total: convertTotal}})
 
             console.log
             
