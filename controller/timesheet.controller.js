@@ -17,36 +17,37 @@ module.exports.GetTimesheet = async (req, res) => {
           return res.status(403).send({message: "Permission denied"});
         }
         const getDataTimesheet = await Timesheet.find();
+        console.log(getDataTimesheet);
         /* --------------------- Check Data ---------------------*/
-        var date = new Date();
-        // date.setHours(Datenow.getHours() + 5);
-        var Datenow = new Date().toISOString();
+        const getTimeCheckout  = await Timesheet.find({name: req.user.name, workDate: "2023-11-03"}).select('checkout');
+        const TimeCheckoutOT = getTimeCheckout[0]['checkout'];
+        var Datenow = new Date().toISOString('en-US', { timeZone: 'Asia/Jakarta' });
         var Today = Datenow.slice(0,10);
         var Time = Datenow.slice(11,19);
-        const cktime_checkin = await Timesheet.find({$and:[{workDate: Today,userId: req.user.user_id}]}).select('checkin');
-        const starWorking = cktime_checkin[0]['checkin'];
-        const cktime_checkout = await Timesheet.find({$and:[{workDate: Today,userId: req.user.user_id}]}).select('checkout');
-        const splitCheckin = starWorking.split(':');
-        const splitCheckout = (cktime_checkout[0]['checkout']).split(':');
-        const checkin = (+splitCheckin[0]) * 60 * 60 + (+splitCheckin[1]) * 60 + (+splitCheckin[2]);
-        const checkout = (+splitCheckout[0]) * 60 * 60 + (+splitCheckout[1]) * 60 + (+splitCheckout[2]);
-        const calTotalTime = checkout - checkin;
-        const TotalTime = (calTotalTime/60)/60;
-        // var DateTimeZone = Datenow.addHours(7);
-        // const getToday = await Timesheet.find({$and:[{workDate: Today,userId: req.user.user_id}]});
+        if(TimeCheckoutOT > "18:29:59"){
+            console.log("startOT");
+        }else{
+            console.log("Can't start OT");
+        }
 
-        const getToday = await Timesheet.find({workDate: Today});
+        const DateTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' },
+        {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', second: "2-digit"}); 
+        const getHours = new Date(DateTime).getHours();
+        const getMin  = new Date(DateTime).getMinutes();
+        const getSecond = new Date(DateTime).getSeconds();
+        var getDay = new Date(DateTime).getDay()-2;
+        var getMonth = new Date(DateTime).getMonth();
+        var getYear = new Date(DateTime).getFullYear();
 
-        const getCheckinTime = await Timesheet.find({workDate: Today, userId: req.user.name});
-        // console.log(checkin);
-        console.log("Time =",TotalTime);
-        
-        
-         /* -----------------------------------------------------*/
+        const FullTime = (getHours+":"+getMin+":"+getSecond);
+        const FullDate = (getYear+":"+getMonth+":"+getDay);
 
-        
-        
-         return res.status(200).send({message: "Get Data Success", data: getDataTimesheet, getToday});
+        console.log("This Day : ",FullDate, "This Time : ",FullTime);
+        console.log("Date Time : ", DateTime);
+        console.log('---------------------------------');
+
+
+         return res.status(200).send({message: "Get Data Success", data: getDataTimesheet});
     }catch(error){
         res.status(500).send({message: "Internal Server Error"});
     }
@@ -62,6 +63,7 @@ module.exports.CreateCheckin = async (req, res) => {
           var Datenow = new Date().toISOString();
           var Today = Datenow.slice(0,10);
           var Time = Datenow.slice(11,19);
+          
         const getUserId = await User.findOne({name: req.user.name}).select("_id");
 
         const chk_checkin = await Timesheet.find({$and:[{workDate: Today, name: req.user.name}]});
@@ -97,26 +99,98 @@ module.exports.CreateCheckout = async (req, res) => {
         if (!permission.includes(req.user.level)) {
             return res.status(403).send({message: "Permission denied"});
           }
-        var Datenow = new Date().toISOString();
+        var Datenow = new Date().toISOString('en-US', { timeZone: 'Asia/Jakarta' });
         var Today = Datenow.slice(0,10);
         var Time = Datenow.slice(11,19);
-        const chk_checkout = await Timesheet.find({$and:[{workDate: Today, name: req.user.name,checkout: "-",userId: req.user.user_id}]});
 
+          /* -------------------------------------- */
+          const DateTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' },
+          {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', second: "2-digit"}); 
+          const getHours = new Date(DateTime).getHours();
+          const getMin  = new Date(DateTime).getMinutes();
+          const getSecond = new Date(DateTime).getSeconds();
+          var getDay = new Date(DateTime).getDay()-2;
+          var getMonth = new Date(DateTime).getMonth()+1;
+          var getYear = new Date(DateTime).getFullYear();
+          if(getDay < 10){
+            getDay = '0'+getDay;
+          }
+          const FullTime =(getHours+":"+getMin+":"+getSecond);
+          const FullDate = (getYear+"-"+getMonth+"-"+getDay);
+          console.log(FullTime);
+          /*--------------------------------------- */
+
+        const chk_checkout = await Timesheet.find({$and:[{workDate: FullDate, name: req.user.name,checkout: "-",userId: req.user.user_id}]});
+        console.log(chk_checkout);
+        console.log("FullDate : >>>>>  ", FullDate)
         if(chk_checkout.length > 0) {
             console.log("ยังไม่ได้ลงชื่อออกงาน")
-            console.log(chk_checkout);
-            const checkout = await Timesheet.updateOne(
-                { name : req.user.name },
-                { $set: { checkout : Time } }
-             );
-            console.log(checkout);
+            // console.log(chk_checkout);
+            const checkout_query = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{checkout: FullTime}})
+            const cktime_checkin = await Timesheet.find({$and:[{workDate: FullDate,userId: req.user.user_id}]}).select('checkin');
+            const startWorking = cktime_checkin[0]['checkin'];
+            const cktime_checkout = await Timesheet.find({$and:[{workDate: FullDate,userId: req.user.user_id}]}).select('checkout');
+            const splitCheckin = startWorking.split(':');
+            const splitCheckout = (cktime_checkout[0]['checkout']).split(':');
+            const checkin = (+splitCheckin[0]) * 60 * 60 + (+splitCheckin[1]) * 60 + (+splitCheckin[2]);
+            const checkout = (+splitCheckout[0]) * 60 * 60 + (+splitCheckout[1]) * 60 + (+splitCheckout[2]);
+            const calTotalTime = checkout - checkin;
+            const TotalTime = (calTotalTime/60)/60;
+            console.log("Data >>>> ",cktime_checkout);
+            
+            var decimalTimeString = TotalTime;
+                var decimalTime = parseFloat(decimalTimeString);
+                decimalTime = decimalTime * 60 * 60;
+                var hours = Math.floor((decimalTime / (60 * 60)));
+                decimalTime = decimalTime - (hours * 60 * 60);
+                var minutes = Math.floor((decimalTime / 60));
+                decimalTime = decimalTime - (minutes * 60);
+                var seconds = Math.round(decimalTime);
+                if(hours < 10)
+                {
+                    hours = "0"+hours;
+                }
+                if(minutes < 10)
+                {
+                    minutes = "0"+minutes;
+                }
+                if(seconds < 10)
+                {
+                    seconds = "0"+seconds;
+                }
+               const convertTotal = hours+":"+minutes+":"+seconds ;
+
+               console.log("convertTotal", convertTotal);
+
+            const getTimeCheckout  = await Timesheet.find({name: req.user.name, workDate: FullDate}).select('checkout');
+            const TimeCheckoutOT = getTimeCheckout[0]['checkout'];
+
+            // if(TimeCheckoutOT > "18:29:59"){
+            //     const cktime_checkout_OT = await Timesheet.find({$and:[{workDate: FullDate,userId: req.user.user_id}]}).select('checkout');
+            //     const splitCheckin_OT = startWorking.split(':');
+            //     const splitCheckout_OT = (cktime_checkout_OT[0]['checkout']).split(':');
+            //     const checkout_OT = (+splitCheckin_OT[0]) * 60 * 60 + (+splitCheckin_OT[1]) * 60 + (+splitCheckin_OT[2]);
+
+            //     const totalOT =  checkout_OT - "18.30";
+            //     console.log(totalOT);
+            // }
+            const updateOT = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{ot: totalOT}})
+            const updateTotal = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{total: convertTotal}})
+
+            console.log
+            
             return res.status(200).send({message:"ลงชื่อออกงานสำเร็จ"});
         }else{
             console.log("ออกงานแล้ว");
-            return res.status(200).send({message: "คุณลงชื่อออกงานแล้ว"});
+            console.log("Today : ",Today);
+            console.log("Fulldate : ",FullDate);
+            console.log("Fulltime : ",FullTime);
+            
+            return res.status(200).send({message: "คุณลงชื่อออกงานไปแล้ว"});
         }
     }catch(error){
         console.error(error);
         res.status(500).send({message: "Internal Server Error"});
     }
 }
+
