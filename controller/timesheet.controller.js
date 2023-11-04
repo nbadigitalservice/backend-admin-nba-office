@@ -16,10 +16,15 @@ module.exports.GetTimesheet = async (req, res) => {
         if (!permission.includes(req.user.level)) {
           return res.status(403).send({message: "Permission denied"});
         }
+        var Datenow = new Date().toISOString('en-US', { timeZone: 'Asia/Jakarta' });
+        var Today = Datenow.slice(0,10);
+        var Time = Datenow.slice(11,19);
         const getDataTimesheet = await Timesheet.find();
-        console.log(getDataTimesheet);
+        const getToday = await Timesheet({workDate: Today});
+        
+
        
-         return res.status(200).send({message: "Get Data Success", data: getDataTimesheet});
+         return res.status(200).send({message: "Get Data Success", data: getDataTimesheet,getToday});
     }catch(error){
         res.status(500).send({message: "Internal Server Error"});
     }
