@@ -18,10 +18,7 @@ module.exports.GetTimesheet = async (req, res) => {
         }
         const getDataTimesheet = await Timesheet.find();
         console.log(getDataTimesheet);
-        /* --------------------- Check Data ---------------------*/
-
-
-
+       
          return res.status(200).send({message: "Get Data Success", data: getDataTimesheet});
     }catch(error){
         res.status(500).send({message: "Internal Server Error"});
