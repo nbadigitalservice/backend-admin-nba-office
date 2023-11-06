@@ -20,7 +20,11 @@ module.exports.GetTimesheet = async (req, res) => {
         var Today = Datenow.slice(0,10);
         var Time = Datenow.slice(11,19);
         const getDataTimesheet = await Timesheet.find();
+<<<<<<< HEAD
         const getToday = await Timesheet.find({workDate: Today});
+=======
+        const getToday = await Timesheet.find({workDate: Today, userId: req.user.user_id});
+>>>>>>> c3af3d2ec310f5caaffcf4fb24a37671c353b6aa
         
         var Datenow2 = new Date().toISOString();
         var Today = Datenow2.slice(0,10);
