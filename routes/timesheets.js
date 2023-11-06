@@ -11,7 +11,7 @@ router.post('/checkinTimesheet', AuthorizeUser,Timesheet.CreateCheckin);
 router.put('/checkoutTimesheet', AuthorizeUser,Timesheet.CreateCheckout);
 router.post('/filterTimesheet', AuthorizeUser,Timesheet.FilterTimsheet );
 router.put('/updateTimesheet',AuthorizeUser, Timesheet.UpdateTimesheet);
-// router.get('/getreport', AuthorizeUser,Timesheet.GetReport);
+router.get('/getreport', AuthorizeUser,Timesheet.GetReport);
 
 
 module.exports = router;
