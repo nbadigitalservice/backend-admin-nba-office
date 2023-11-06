@@ -260,14 +260,9 @@ module.exports.FilterTimsheet = async (req, res) => {
             var convert_getMonth = getMonth < 10 ? '0'+getMonth : getMonth;
             const FullTime =(convert_getHours+":"+convert_getMin+":"+convert_getSecond);
             const FullDate = (getYear+"-"+convert_getMonth+"-"+convert_getDay);
-
-            console.log(FullDate);
-            const getUserTimesheet = await Timesheet.find();
-           
-
-            console.log("FullDate: ", FullDate, "FullTime :", FullTime);
+            const getUserTimesheet = await Timesheet.find({workDate: req.body.Date});
             
-            return  res.status(200).send({message: "Undermind"});;
+            return  res.status(200).send({message: "Get Timesheet from date Success", getUserTimesheet});;
         }catch(error){
             res.status(500).send({message: "Internal Server Error"});
         }
