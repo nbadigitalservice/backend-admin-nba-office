@@ -244,10 +244,31 @@ module.exports.FilterTimsheet = async (req, res) => {
             if (!permission.includes(req.user.level)) {
               return res.status(403).send({message: "Permission denied"});
             }
+
+            const DateTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' },
+            {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', second: "2-digit"});
+            const getHours = new Date(DateTime).getHours();
+            const getMin  = new Date(DateTime).getMinutes();
+            const getSecond = new Date(DateTime).getSeconds();
+            var getDay = new Date(DateTime).getDate();
+            var getMonth = new Date(DateTime).getMonth()+1;
+            var getYear = new Date(DateTime).getFullYear();
+            var convert_getHours = getHours < 10 ? '0'+getHours : getHours;
+            var convert_getMin = getMin < 10 ? '0'+getMin : getMin;
+            var convert_getSecond = getSecond < 10 ? '0'+getSecond : getSecond;
+            var convert_getDay = getDay < 10 ? '0'+getDay : getDay;
+            var convert_getMonth = getMonth < 10 ? '0'+getMonth : getMonth;
+            const FullTime =(convert_getHours+":"+convert_getMin+":"+convert_getSecond);
+            const FullDate = (getYear+"-"+convert_getMonth+"-"+convert_getDay);
+
+            console.log(FullDate);
+            const getUserTimesheet = await Timesheet.find();
+           
+
+            console.log("FullDate: ", FullDate, "FullTime :", FullTime);
+            
             return  res.status(200).send({message: "Undermind"});;
         }catch(error){
             res.status(500).send({message: "Internal Server Error"});
         }
 }
-
-console.log("I'm Not");
