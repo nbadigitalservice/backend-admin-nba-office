@@ -47,10 +47,9 @@ module.exports.CreateCheckin = async (req, res) => {
           const getHours = new Date(DateTime).getHours();
           const getMin  = new Date(DateTime).getMinutes();
           const getSecond = new Date(DateTime).getSeconds();
-          var getDay = new Date(DateTime).getDay()-2;
+          var getDay = new Date(DateTime).getDate();
           var getMonth = new Date(DateTime).getMonth()+1;
           var getYear = new Date(DateTime).getFullYear();
-        
           var convert_getHours = getHours < 10 ? '0'+getHours : getHours;
           var convert_getMin = getMin < 10 ? '0'+getMin : getMin;
           var convert_getSecond = getSecond < 10 ? '0'+getSecond : getSecond;
@@ -60,10 +59,12 @@ module.exports.CreateCheckin = async (req, res) => {
           const FullTime =(convert_getHours+":"+convert_getMin+":"+convert_getSecond);
           const FullDate = (getYear+"-"+convert_getMonth+"-"+convert_getDay);
           
+          console.log("FullTime :", FullTime);
+          console.log("FullDate :", FullDate);
         const getUserId = await User.findOne({name: req.user.name}).select("_id");
 
-        const chk_checkin = await Timesheet.find({$and:[{workDate: FullDate, name: req.user.name}]});
-
+        const chk_checkin = await Timesheet.find({$and:[{workDate: FullDate, name: req.user.name, userId: req.user.user_id}]});
+          console.log("chk_checkin>>>>>>", chk_checkin)
         if(chk_checkin.length > 0){
             return res.status(200).send({message: "คุณลงเวลาทำงานแล้ว"});
         }else{
@@ -104,10 +105,9 @@ module.exports.CreateCheckout = async (req, res) => {
           const getHours = new Date(DateTime).getHours();
           const getMin  = new Date(DateTime).getMinutes();
           const getSecond = new Date(DateTime).getSeconds();
-          var getDay = new Date(DateTime).getDay()-2;
+          var getDay = new Date(DateTime).getDate();
           var getMonth = new Date(DateTime).getMonth()+1;
           var getYear = new Date(DateTime).getFullYear();
-        
           var convert_getHours = getHours < 10 ? '0'+getHours : getHours;
           var convert_getMin = getMin < 10 ? '0'+getMin : getMin;
           var convert_getSecond = getSecond < 10 ? '0'+getSecond : getSecond;
@@ -116,10 +116,12 @@ module.exports.CreateCheckout = async (req, res) => {
 
           const FullTime =(convert_getHours+":"+convert_getMin+":"+convert_getSecond);
           const FullDate = (getYear+"-"+convert_getMonth+"-"+convert_getDay);
-    
+          console.log("FullData: ", FullDate, "FullTime :", FullTime);
 
           const chk_checkout = await Timesheet.find({$and:[{workDate: FullDate, name: req.user.name,checkout: "-",userId: req.user.user_id}]});
-          console.log("chk_checkout >>>>> ", chk_checkout)
+          console.log("chk_checkout >>>>> ", FullDate)
+          console.log("req.user.name", req.user.name);
+          console.log(chk_checkout);
         if(chk_checkout.length > 0){
 
             const checkout_query = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{checkout: FullTime}})
