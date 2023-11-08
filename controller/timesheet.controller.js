@@ -121,8 +121,7 @@ module.exports.CreateCheckout = async (req, res) => {
           console.log("req.user.name", req.user.name);
           console.log(chk_checkout);
         if(chk_checkout.length > 0){
-            const mockdata_time = "20:53:11";
-            const checkout_query = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{checkout: mockdata_time}})
+            const checkout_query = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{checkout: FullTime}})
             const getTimesheet = await Timesheet.find({$and:[{workDate: FullDate,userId: req.user.user_id}]});
             const workingStartToday = (getTimesheet[0]['checkin']).split(':');
             const workingEndToday = (getTimesheet[0]['checkout']).split(':');
