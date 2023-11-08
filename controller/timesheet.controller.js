@@ -136,6 +136,7 @@ module.exports.CreateCheckout = async (req, res) => {
             console.log("reChk_checkout", reChk_checkout[0]['checkout']);
             console.log("workingStartCaltoSec", workingStartCaltoSec)
             console.log("workingEndCaltoSec", workingEndCaltoSec);
+            console.log("TotalTime :", chkCalDate);
 
             const chkOT = await Timesheet.find({$and:[{workDate: FullDate,userId: req.user.user_id, name: req.user.name}]});
             if(chkOT[0]['checkout'] > "18:29:59"){
@@ -148,9 +149,13 @@ module.exports.CreateCheckout = async (req, res) => {
                     const calToMillianSec = (caltoOT*1000)
                     const newDateOT = new Date(calToMillianSec);
                     const timeOT = newDateOT.getHours()+":"+newDateOT.getMinutes();
-                    const TotalOT = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{ot: timeOT}})
+                    const TotalOT = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{ot: result_ot}})
                     const chkCalOT = "20:30:00" - "18:30:00";
                     console.log("Time OT : ", timeOT);
+                    console.log("start sec", start_ot_sec);
+                    console.log("ot_sec", ot_sec);
+                    console.log("caltoOT : ", caltoOT);
+                    console.log("result_ot :", result_ot);
 
 
 
