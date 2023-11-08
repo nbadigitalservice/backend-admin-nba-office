@@ -258,6 +258,7 @@ module.exports.UpdateTimesheet = async (req, res) => {
                     console.log("caltoOT : ", caltoOT);
                     console.log("result_ot :", result_ot);
             }else{
+                    const TotalOT = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{ot: "-"}})
                     console.log("ยังไม่ถึงเวลา OT")
             }
 
