@@ -121,8 +121,8 @@ module.exports.CreateCheckout = async (req, res) => {
           console.log("req.user.name", req.user.name);
           console.log(chk_checkout);
         if(chk_checkout.length > 0){
-
-            const checkout_query = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{checkout: FullTime}})
+            const mockdata_time = "20:53:11";
+            const checkout_query = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{checkout: mockdata_time}})
             const getTimesheet = await Timesheet.find({$and:[{workDate: FullDate,userId: req.user.user_id}]});
             const workingStartToday = (getTimesheet[0]['checkin']).split(':');
             const workingEndToday = (getTimesheet[0]['checkout']).split(':');
@@ -148,9 +148,9 @@ module.exports.CreateCheckout = async (req, res) => {
                     const calToMillianSec = (caltoOT*1000)
                     const newDateOT = new Date(calToMillianSec);
                     const timeOT = newDateOT.getHours()+":"+newDateOT.getMinutes();
-                    // const TotalOT = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{ot: result_ot}})
+                    const TotalOT = await Timesheet.updateOne({name: req.user.name, workDate: FullDate}, {$set:{ot: timeOT}})
                     const chkCalOT = "20:30:00" - "18:30:00";
-                    console.log("Time OT : ", start_ot_sec);
+                    console.log("Time OT : ", timeOT);
 
 
 
@@ -211,7 +211,7 @@ module.exports.UpdateTimesheet = async (req, res) => {
         const getWorkDate = req.body.workDate;
         const getCheckin = req.body.checkin;
         const getCheckout = req.body.checkout;
-        const getUserId = req.body.userId;
+        const getTimesheetId = req.body.id;
 
         const workingStartToday = getCheckin.split(':');
         const workingEndToday = getCheckout.split(':');
@@ -222,8 +222,8 @@ module.exports.UpdateTimesheet = async (req, res) => {
         console.log("MinusForSec", chkCalDate);
         const DataTimesheet = await Timesheet.find({userId: getUserId, workDate: getWorkDate});
         const TimesheetUpdate = await Timesheet.updateMany(
-            {userId: getUserId, workDate: getWorkDate},
-            {$set: {workDate:getWorkDate, checkin: getCheckin, checkout: getCheckout, total: chkCalDate}}
+            {_id: getTimesheetId},
+            {$set: {checkin: getCheckin, checkout: getCheckout, total: chkCalDate}}
         );
         
 
